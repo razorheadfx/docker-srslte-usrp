@@ -1,59 +1,45 @@
-#installs all dependencies and builds srsLTE and srsUE
+#installs all dependencies and builds srsLTE 2.0 >
 
 #the executable for ue can be found in /srs
 #the source code and build directories can be found in /git
 #run with docker run -i -t --privileged -v /dev/bus/usb:/dev/bus/usb <image> bash
+#use uhd_find_device to check if the container sees the USRP
 
 FROM ubuntu:16.04
 MAINTAINER razorheadfx <razorhead.effect@gmail.com>
 
-
 RUN echo "Installing basics"
 RUN apt-get update
-RUN apt-get install -y gcc git make cmake build-essential software-properties-common
-#software properties common is required for add-apt-repository
+RUN apt-get install -y software-properties-common gcc git make cmake build-essential pkg-config nano moreutils
 
-RUN echo "Adding repos"
-RUN add-apt-repository -y ppa:ettusresearch/uhd
-
-RUN echo "Installing deps"
-RUN apt-get update
-RUN apt-get install -y libboost-all-dev
-#warning: pulled libboost-all-dev because libboost(-dev) alone left cmake unable to find boost when building the makefiles for srsUE
-#ursp drivers
+RUN echo "Installing and downloading uhd software and fpga image"
+RUN add-apt-repository -y ppa:ettusresearch/uhd 
+RUN apt-get update 
 RUN apt-get install -y libuhd-dev uhd-host libuhd003
 RUN python /usr/lib/uhd/utils/uhd_images_downloader.py
 
-#srsLTE: volk 
-RUN apt-get install -y libvolk1-bin libvolk1-dev
-#srsLTE: libfftw 
-RUN apt-get install -y libfftw3-bin libfftw3-dev
-#srsUE: mbedtls
-RUN apt-get install -y libmbedtls-dev
-
 #make build dirs
+RUN echo "Setting up build dir"
 RUN mkdir git
 WORKDIR git
-RUN git clone https://github.com/srsLTE/srsUE.git
-RUN mkdir srsUE/build
 RUN git clone https://github.com/srsLTE/srsLTE.git
 RUN mkdir srsLTE/build
 
+RUN echo "Installing deps"
+RUN apt-get install -y libboost-all-dev
+#warning: pulled libboost-all-dev because libboost(-dev) alone left cmake unable to find boost when building the makefiles for srsUE
+RUN apt-get install -y libvolk1-bin libvolk1-dev libfftw3-bin libfftw3-dev libmbedtls-dev libmbedtls10 libsctp-dev lksctp-tools libconfig-dev libconfig++-dev
+
 RUN echo "Building srsLTE"
 WORKDIR /git/srsLTE/build
-RUN cmake ../
+RUN cmake ..
 RUN make install
 
-RUN echo "Building srsUE"
-WORKDIR /git/srsUE/build
-RUN cmake ../
-RUN make
+WORKDIR /git/srsLTE/build
 
-RUN echo "Setting up env"
-RUN mkdir /srs
-WORKDIR srs
-RUN ln -s -T /git/srsUE/build/ue/src/ue ue
-
-
+RUN echo "Setting up PATH"
+ENV PATH="/git/srsLTE/build/lib/examples:${PATH}"
+ENV PATH="/git/srsLTE/build/srsenb/src:${PATH}"
+ENV PATH="/git/srsLTE/build/srsue/src:${PATH}"
 
 
