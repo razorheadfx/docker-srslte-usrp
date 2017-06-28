@@ -35,11 +35,9 @@ WORKDIR /git/srsLTE/build
 RUN cmake ..
 RUN make install
 
-WORKDIR /git/srsLTE/build
+WORKDIR /conf
 
 RUN echo "Setting up PATH"
 ENV PATH="/git/srsLTE/build/lib/examples:${PATH}"
 ENV PATH="/git/srsLTE/build/srsenb/src:${PATH}"
 ENV PATH="/git/srsLTE/build/srsue/src:${PATH}"
-
-
