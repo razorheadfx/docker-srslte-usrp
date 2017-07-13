@@ -4,6 +4,8 @@ Pulls the srsLTE project [srsLTE] (> 2.0), the USRP drivers from the [Ettus
 Research PPA] and builds both eNodeB and UE binaries with the USRP as targeted
 SDR front-end.
 
+Since this is a [multistage] build, you need at least **Docker 17.05**.
+
 Build with:
 
     docker build -t srs docker-srslte-usrp
