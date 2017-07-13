@@ -17,7 +17,6 @@ RUN echo "deb http://ppa.launchpad.net/ettusresearch/uhd/ubuntu \
         cmake \
         libuhd-dev \
         uhd-host \
-        libuhd003 \
         libboost-all-dev \
         # warning: pulled libboost-all-dev because libboost(-dev) alone left
         # cmake unable to find boost when building the makefiles for srsUE
@@ -51,16 +50,14 @@ RUN echo "deb http://ppa.launchpad.net/ettusresearch/uhd/ubuntu \
  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 6169358E \
  && apt-get update \
  && apt-get install -y \
-        libuhd-dev \
         uhd-host \
         libuhd003 \
+       libvolk1.1 \
+       libfftw3-3 \
+       libmbedtls10 \
+       libsctp1 \
+       libconfig++9v5 \
  && python /usr/lib/uhd/utils/uhd_images_downloader.py \
- && apt-get install -y \
-     libvolk1.1 \
-     libfftw3-3 \
-     libmbedtls10 \
-     libsctp1 \
-     libconfig++9v5 \
  && rm -rf /var/lib/apt/lists/*
 
 # Get compiled srsLTE
