@@ -10,13 +10,6 @@ Build with:
 
     docker build -t srs docker-srslte-usrp
 
-**Note** until https://github.com/srsLTE/srsLTE/pull/88 is merged, use:
-
-    docker build -t srs --build-arg SRSLTE_REPO=https://github.com/pgorczak/srsLTE docker-srslte-usrp
-
-If it gets rejected, we should adapt *Dockerfile* accordingly (copy executables
-from build dir).
-
 ## Build args
 
 * `UBUNTU_VERSION` codename of the base Ubuntu (default `xenial`)
