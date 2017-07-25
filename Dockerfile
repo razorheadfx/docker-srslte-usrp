@@ -5,6 +5,8 @@ FROM ubuntu:${UBUNTU_VERSION} as builder
 ARG UBUNTU_VERSION
 ARG SRSLTE_REPO=https://github.com/srsLTE/srsLTE
 ARG SRSLTE_CHECKOUT=master
+ARG SRSGUI_REPO=https://github.com/srsLTE/srsGUI
+ARG SRSGUI_CHECKOUT=master
 
 # Install build dependencies
 RUN echo "deb http://ppa.launchpad.net/ettusresearch/uhd/ubuntu \
@@ -25,7 +27,22 @@ RUN echo "deb http://ppa.launchpad.net/ettusresearch/uhd/ubuntu \
         libmbedtls-dev \
         libsctp-dev \
         libconfig++-dev \
+        libqwt-dev \
+        libqt4-dev \
  && rm -rf /var/lib/apt/lists/*
+
+# Clone srsgui and build
+RUN mkdir /srsgui \
+ && cd /srsgui \
+ && git clone $SRSGUI_REPO srsgui \
+ && cd srsgui \
+ && git checkout $SRSGUI_CHECKOUT \
+ && mkdir build \
+ && cd build \
+ && cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/srsgui .. \
+ && make install
+
+ENV SRSGUI_DIR /opt/srsgui
 
 # Clone repo and build
 RUN mkdir /srslte \
@@ -59,14 +76,20 @@ RUN echo "deb http://ppa.launchpad.net/ettusresearch/uhd/ubuntu \
        libmbedtls10 \
        libsctp1 \
        libconfig++9v5 \
+       libqtgui4 \
+       libqwt6abi1 \
  && python /usr/lib/uhd/utils/uhd_images_downloader.py \
  && rm -rf /var/lib/apt/lists/*
+#### Warning: when building this with ubuntu:14.04 substitute libqwt6abi with libqwt6 
 
 # Get compiled srsLTE
 COPY --from=builder /opt/srslte /opt/srslte
+COPY --from=builder /opt/srsgui /opt/srsgui
 
 # Set up paths
 ENV LD_LIBRARY_PATH /opt/srslte/lib:$LD_LIBRARY_PATH
+ENV LD_LIBRARY_PATH /opt/srsgui/lib:$LD_LIBRARY_PATH
+
 ENV PATH /opt/srslte/bin:$PATH
 
 WORKDIR /conf
