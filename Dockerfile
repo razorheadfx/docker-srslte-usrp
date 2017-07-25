@@ -39,6 +39,8 @@ RUN mkdir /srslte \
  && cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/srslte ../srslte \
  && make install
 
+# Copy the examples over
+RUN cd /srslte/build/lib/examples && cp $(ls | grep -vi make) /opt/srslte/bin
 
 # Final container
 FROM ubuntu:${UBUNTU_VERSION}
