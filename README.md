@@ -31,7 +31,11 @@ Run eNodeB directly (on the container):
 
     bash -c "srsenb enb.conf & tail --follow --retry /tmp/enb.log"
 
-Use `uhd_find_device` to check if the container sees the USRP.
+Use `uhd_find_device` to check if the container sees the USRP. 
+  
+If you want to run GUI applications within the container (also works via SSH):
+
+    xstart.sh
 
 ## TODO
 - [ ] figure out required capabilities (instead of `--privileged`)
