@@ -37,7 +37,7 @@ RUN mkdir /srslte \
  && mkdir build \
  && cd build \
  && cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/srslte ../srslte \
- && make install
+ && make -j$(ncore) install
 
 # Copy the examples over
 RUN cd /srslte/build/lib/examples && cp $(ls | grep -vi make) /opt/srslte/bin
