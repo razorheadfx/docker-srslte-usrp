@@ -40,7 +40,7 @@ RUN mkdir /srsgui \
  && mkdir build \
  && cd build \
  && cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/srsgui .. \
- && make install
+ && make install -j8
 
 ENV SRSGUI_DIR /opt/srsgui
 
@@ -54,7 +54,7 @@ RUN mkdir /srslte \
  && mkdir build \
  && cd build \
  && cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/srslte ../srslte \
- && make install
+ && make install -j8
 
 # Copy the examples over
 RUN cd /srslte/build/lib/examples && cp $(ls | grep -vi make) /opt/srslte/bin
